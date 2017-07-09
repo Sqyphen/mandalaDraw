@@ -1,6 +1,7 @@
 var canvas = document.getElementById('canvas'),
 	context = canvas.getContext("2d"),
 	clearButton = document.getElementById("clearButton"),
+	//undoButton = document.getElementById("undoButton"),
 	paint = false,
 	clickX = [],
 	clickY = [],
@@ -10,6 +11,7 @@ var canvas = document.getElementById('canvas'),
 function init()
 {
 	clearButton.addEventListener("click", clearDrawing);
+	//undoButton.addEventListener("click", autoUndo);
 	context.save();
 	context.translate((canvas.height/2), (canvas.width/2));
 }
@@ -102,12 +104,39 @@ function getDrawPoints(previousX, previousY, nextX, nextY, angle)
 	return points;
 }
 
-function undoDrawing() {
+function undoDrawing()
+{
+	var lastPointX = clickX.pop();
+	var lastPointY = clickY.pop();
+	context.clearRect(-canvas.width/2, -canvas.height/2, canvas.width, canvas.height);
 
+	var i=0;
+	clickX.forEach(function(point){
+		
+		var previousX = clickX[i-2];
+		var previousY = clickY[i-2];
+		var nextX = clickX[i-1];
+		var nextY = clickY[i-1];
+
+		pointTransformations.forEach(function(angle) {
+			var points = getDrawPoints(previousX, previousY, nextX, nextY, angle);
+			drawLine(points.pX, points.pY, points.nX, points.nY);
+			drawLine(points.pX, -points.pY, points.nX, -points.nY);
+		});
+
+		i++;
+	});
 }
 
-function clearDrawing(e) {
-	e.preventDefault();
+//TODO: single step removal not visible to user?
+function autoUndo()
+{
+	while(clickX.length > 0){
+		undoDrawing();
+	}
+}
+
+function clearDrawing() {
 	clickX = [];
 	clickY = [];
 	context.clearRect(-canvas.width/2, -canvas.height/2, canvas.width, canvas.height);
