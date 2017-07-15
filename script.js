@@ -10,10 +10,12 @@ var canvas = document.getElementById('canvas'),
 
 function init()
 {
-	clearButton.addEventListener("click", clearDrawing);
+	canvas.width = window.innerWidth;
+	canvas.height = window.innerHeight;
+	//clearButton.addEventListener("click", clearDrawing);
 	//undoButton.addEventListener("click", autoUndo);
 	context.save();
-	context.translate((canvas.height/2), (canvas.width/2));
+	context.translate((canvas.width/2), (canvas.height/2));
 }
 
 canvas.onmousedown = function (e)
