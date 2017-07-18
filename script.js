@@ -65,13 +65,11 @@ function addClick(x, y, dragging)
 	clickY.push(offsetY);
 	clickDrag.push(dragging);
 
-	/*
 	context.rotate(90*Math.PI/180);
 	context.rect(offsetX,offsetY,3,3);
 	context.fillStyle = "#fff";
 	context.fill();
 	context.stroke();
-	*/
 }
 
 function rotate(cx, cy, x, y, angle)
@@ -105,7 +103,7 @@ function drawLines()
 	var nextX = clickX[clickLength-1];
 	var nextY = clickY[clickLength-1];
 
-	context.clearRect(-canvas.width/2, -canvas.height/2, canvas.width, canvas.height);
+	//context.clearRect(-canvas.width/2, -canvas.height/2, canvas.width, canvas.height);
 
 	pointTransformations.forEach(function(angle) {
 		var points = getDrawPoints(previousX, previousY, nextX, nextY, angle);
