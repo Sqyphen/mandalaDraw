@@ -14,8 +14,20 @@ function init()
 	canvas.height = window.innerHeight;
 	//clearButton.addEventListener("click", clearDrawing);
 	//undoButton.addEventListener("click", autoUndo);
+	
+	window.addEventListener("resize", resize);
 	context.save();
 	context.translate((canvas.width/2), (canvas.height/2));
+}
+
+function resize()
+{
+	canvas.width = window.innerWidth;
+	canvas.height = window.innerHeight;
+	context.translate((canvas.width/2), (canvas.height/2));
+
+	//replace with full redraw
+	redraw();
 }
 
 canvas.onmousedown = function (e)
@@ -46,9 +58,20 @@ canvas.onmouseleave = function(e)
 
 function addClick(x, y, dragging)
 {
-	clickX.push(x-(canvas.width/2));
-	clickY.push(y-(canvas.height/2));
+	var offsetX = x - (canvas.width/2);
+	var offsetY = y - (canvas.height/2)
+
+	clickX.push(offsetX);
+	clickY.push(offsetY);
 	clickDrag.push(dragging);
+
+	/*
+	context.rotate(90*Math.PI/180);
+	context.rect(offsetX,offsetY,3,3);
+	context.fillStyle = "#fff";
+	context.fill();
+	context.stroke();
+	*/
 }
 
 function rotate(cx, cy, x, y, angle)
@@ -66,6 +89,11 @@ function redraw()
 	context.strokeStyle = "#ffffff";
 	context.lineJoin = "round";
 	context.lineWidth = 3;
+	context.shadowColor = '#c1c6ec';
+	context.shadowBlur = 8;
+	context.shadowOffsetX = 0;
+	context.shadowOffsetY = 0;
+
 	drawLines();
 }
 
@@ -76,6 +104,8 @@ function drawLines()
 	var previousY = clickY[clickLength-2];
 	var nextX = clickX[clickLength-1];
 	var nextY = clickY[clickLength-1];
+
+	context.clearRect(-canvas.width/2, -canvas.height/2, canvas.width, canvas.height);
 
 	pointTransformations.forEach(function(angle) {
 		var points = getDrawPoints(previousX, previousY, nextX, nextY, angle);
