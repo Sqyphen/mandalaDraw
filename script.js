@@ -37,6 +37,13 @@ canvas.onmousedown = function (e)
 	redraw();
 };
 
+canvas.touchstart = function (e)
+{
+	paint = true;
+	addClick(e.pageX - this.offsetLeft, e.pageY - this.offsetTop);
+	redraw();
+};
+
 canvas.onmousemove = function(e)
 {
 	if(paint)
@@ -46,7 +53,21 @@ canvas.onmousemove = function(e)
 	}
 };
 
+canvas.touchmove = function(e)
+{
+	if(paint)
+	{
+		addClick(e.pageX - this.offsetLeft, e.pageY - this.offsetTop, true);
+		redraw();
+	}
+};
+
 canvas.onmouseup = function(e)
+{
+	paint = false;
+};
+
+canvas.touchend = function(e)
 {
 	paint = false;
 };
@@ -70,6 +91,7 @@ function addClick(x, y, dragging)
 	context.fillStyle = "#fff";
 	context.fill();
 	context.stroke();
+
 }
 
 function rotate(cx, cy, x, y, angle)
