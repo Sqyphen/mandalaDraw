@@ -1,7 +1,5 @@
-var canvas = document.getElementById('canvas'),
+var canvas = document.getElementById("canvas"),
 	context = canvas.getContext("2d"),
-	clearButton = document.getElementById("clearButton"),
-	//undoButton = document.getElementById("undoButton"),
 	paint = false,
 	clickX = [],
 	clickY = [],
@@ -12,8 +10,6 @@ function init()
 {
 	canvas.width = window.innerWidth;
 	canvas.height = window.innerHeight;
-	//clearButton.addEventListener("click", clearDrawing);
-	//undoButton.addEventListener("click", autoUndo);
 	
 	window.addEventListener("resize", resize);
 	context.save();
@@ -26,7 +22,6 @@ function resize()
 	canvas.height = window.innerHeight;
 	context.translate((canvas.width/2), (canvas.height/2));
 
-	//replace with full redraw
 	redraw();
 }
 
@@ -47,8 +42,7 @@ canvas.touchstart = function (e)
 
 canvas.onmousemove = function(e)
 {
-	if(paint)
-	{
+	if(paint) {
 		addClick(e.pageX - this.offsetLeft, e.pageY - this.offsetTop, true);
 		redraw();
 	}
@@ -57,8 +51,7 @@ canvas.onmousemove = function(e)
 canvas.touchmove = function(e)
 {
 	console.log("touchmove");
-	if(paint)
-	{
+	if(paint) {
 		addClick(e.pageX - this.offsetLeft, e.pageY - this.offsetTop, true);
 		redraw();
 	}
@@ -84,20 +77,6 @@ function addClick(x, y, dragging)
 {
 	var offsetX = x - (canvas.width/2);
 	var offsetY = y - (canvas.height/2);
-
-	/*
-	var previousX = clickX[clickX.length-1];
-	var previousY = clickY[clickY.length-1];
-
-
-	if((previousX-offsetX) <= 1 && (previousX-offsetX) >= -1){
-		clickX.pop();
-	}
-
-	if((previousY-offsetY) <= 1 && (previousY-offsetY) >= -1){
-		clickY.pop();
-	}
-	*/
 
 	clickX.push(offsetX);
 	clickY.push(offsetY);
@@ -150,25 +129,28 @@ function drawLinesRedraw()
 
 	pointTransformations.forEach(function(angle)
 	{
-		for(var i=0; i < clickX.length; i++)
-		{
-			if(i % 2 == 0)
-			{
-				slicedX = clickX.slice(Math.max(clickX.length - 100, 1));
-				slicedY = clickY.slice(Math.max(clickY.length - 100, 1));
+		var i = 0;
+		var clickXLength = clickX.length;
 
-				var originX = slicedX[i-2];
-				var originY = slicedY[i-2];
-				var previousX = slicedX[i-1];
-				var previousY = slicedY[i-1];
-				var nextX = slicedX[i];
-				var nextY = slicedY[i]; 
-				var points = getDrawCurvePoints(originX, originY, previousX, previousY, nextX, nextY, angle);
-				drawCurve(points.pXorigin, points.pYorigin, points.pX, points.pY, points.nX, points.nY);
-				drawCurve(points.pXorigin, -points.pYorigin, points.pX, -points.pY, points.nX, -points.nY);
-			}
+		while(i < clickXLength)
+		{
+			var slicedX = clickX.slice(Math.max(clickX.length - 60, 1));
+			var slicedY = clickY.slice(Math.max(clickY.length - 60, 1));
+			var originX = slicedX[i-2];
+			var originY = slicedY[i-2];
+			var previousX = slicedX[i-1];
+			var previousY = slicedY[i-1];
+			var nextX = slicedX[i];
+			var nextY = slicedY[i]; 
+			
+			var points = getDrawCurvePoints(previousX, previousY, previousX, previousY, nextX, nextY, angle);
+			drawCurve(points.pXorigin, points.pYorigin, points.pX, points.pY, points.nX, points.nY);
+			drawCurve(points.pXorigin, -points.pYorigin, points.pX, -points.pY, points.nX, -points.nY);
+
+			i++;
 		}
 
+		context.rotate(45*Math.PI/180);
 		var points = getDrawPoints(0, 0, clickX[clickX.length-1], clickY[clickY.length-1], angle);
 		context.rect(points.nX, points.nY,3,3);
 		context.fillStyle = "#fff";
@@ -179,6 +161,7 @@ function drawLinesRedraw()
 		context.fillStyle = "#fff";
 		context.fill();
 		context.stroke();
+		context.rotate(-45*Math.PI/180);
 
 	});
 
@@ -229,44 +212,6 @@ function getDrawCurvePoints(originX, originY, previousX, previousY, nextX, nextY
 		'nY' : nextRotated[1],
 	};
 	return points;
-}
-
-function undoDrawing()
-{
-	var lastPointX = clickX.pop();
-	var lastPointY = clickY.pop();
-	context.clearRect(-canvas.width/2, -canvas.height/2, canvas.width, canvas.height);
-
-	var i=0;
-	clickX.forEach(function(point){
-		
-		var previousX = clickX[i-2];
-		var previousY = clickY[i-2];
-		var nextX = clickX[i-1];
-		var nextY = clickY[i-1];
-
-		pointTransformations.forEach(function(angle) {
-			var points = getDrawPoints(previousX, previousY, nextX, nextY, angle);
-			drawLine(points.pX, points.pY, points.nX, points.nY);
-			drawLine(points.pX, -points.pY, points.nX, -points.nY);
-		});
-
-		i++;
-	});
-}
-
-//TODO: single step removal not visible to user?
-function autoUndo()
-{
-	while(clickX.length > 0){
-		undoDrawing();
-	}
-}
-
-function clearDrawing() {
-	clickX = [];
-	clickY = [];
-	context.clearRect(-canvas.width/2, -canvas.height/2, canvas.width, canvas.height);
 }
 
 init();
