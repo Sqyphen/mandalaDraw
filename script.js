@@ -154,8 +154,8 @@ function drawLinesRedraw()
 		{
 			if(i % 2 == 0)
 			{
-				slicedX = clickX.slice(Math.max(clickX.length - 55, 1));
-				slicedY = clickY.slice(Math.max(clickY.length - 55, 1));
+				slicedX = clickX.slice(Math.max(clickX.length - 100, 1));
+				slicedY = clickY.slice(Math.max(clickY.length - 100, 1));
 
 				var originX = slicedX[i-2];
 				var originY = slicedY[i-2];
