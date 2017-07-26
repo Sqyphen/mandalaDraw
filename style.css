@@ -16,7 +16,6 @@ body {
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#47428d', endColorstr='#96a5cf',GradientType=0 ); /* IE6-9 */
 }
 canvas {
-	border: 1px solid grey;
 	width:  100%;
 	height: 100%;
 }
