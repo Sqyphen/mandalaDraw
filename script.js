@@ -6,8 +6,7 @@ var canvas = document.getElementById("canvas"),
 	clickDrag = [],
 	pointTransformations = [ 0, -72, -144, -216, -284 ];
 
-function init()
-{
+function init(){
 	canvas.width = window.innerWidth;
 	canvas.height = window.innerHeight;
 	
@@ -16,31 +15,42 @@ function init()
 	context.translate((canvas.width/2), (canvas.height/2));
 }
 
-function resize()
-{
+function resize(){
 	canvas.width = window.innerWidth;
 	canvas.height = window.innerHeight;
 	context.translate((canvas.width/2), (canvas.height/2));
 	redraw();
 }
 
-canvas.onmousedown = function (e)
-{
+canvas.onmousedown = function (e){
 	paint = true;
 };
 
-canvas.onmousemove = function(e)
-{
+canvas.addEventListener("touchstart", function (e) {
+	paint = true;
+}, false);
+
+canvas.onmousemove = function(e){
 	if(paint) {
-		addClick(e.pageX - this.offsetLeft, e.pageY - this.offsetTop, true);
+		addClick(e.pageX , e.pageY, true);
 		redraw();
 	}
 };
 
-canvas.onmouseup = function(e)
-{
+canvas.addEventListener("touchmove", function (e) {
+	if(paint) {
+		addClick(e.touches[0].clientX, e.touches[0].clientY, true);
+		redraw();
+	}
+}, false);
+
+canvas.onmouseup = function(e){
 	paint = false;
 };
+
+canvas.addEventListener("touchend", function (e) {
+	paint = false;
+}, false);
 
 function addClick(x, y, dragging)
 {
@@ -52,8 +62,7 @@ function addClick(x, y, dragging)
 	clickDrag.push(dragging);
 }
 
-function rotate(cx, cy, x, y, angle)
-{
+function rotate(cx, cy, x, y, angle){
     var radians = (Math.PI / 180) * angle,
         cos = Math.cos(radians),
         sin = Math.sin(radians),
@@ -62,8 +71,7 @@ function rotate(cx, cy, x, y, angle)
     return [nx, ny];
 }
 
-function redraw()
-{
+function redraw(){
 	context.strokeStyle = "#ffffff";
 	context.lineJoin = "round";
 	context.lineWidth = 3;
@@ -75,8 +83,7 @@ function redraw()
 	drawLinesRedraw();
 }
 
-function drawLinesRedraw()
-{
+function drawLinesRedraw(){
 	context.clearRect(-canvas.width/2, -canvas.height/2, canvas.width, canvas.height);
 
 	pointTransformations.forEach(function(angle)
@@ -93,7 +100,6 @@ function drawLinesRedraw()
 			var previousY = slicedY[i-1];
 			var nextX = slicedX[i];
 			var nextY = slicedY[i]; 
-
 			var points = getDrawCurvePoints(previousX, previousY, previousX, previousY, nextX, nextY, angle);
 
 			context.moveTo(points.pXorigin, points.pYorigin);
@@ -104,7 +110,6 @@ function drawLinesRedraw()
 			
 			i++;
 		}
-
 		context.closePath();
 
 		//draw endpoints
@@ -132,8 +137,7 @@ function drawLinesRedraw()
 	});
 }
 
-function getDrawPoints(previousX, previousY, nextX, nextY, angle)
-{
+function getDrawPoints(previousX, previousY, nextX, nextY, angle){
 	var previousRotated = rotate(0, 0, previousX, previousY, angle);
 	var nextRotated = rotate(0, 0, nextX, nextY, angle);
 	var points = {
@@ -145,8 +149,7 @@ function getDrawPoints(previousX, previousY, nextX, nextY, angle)
 	return points;
 }
 
-function getDrawCurvePoints(originX, originY, previousX, previousY, nextX, nextY, angle)
-{
+function getDrawCurvePoints(originX, originY, previousX, previousY, nextX, nextY, angle){
 	var originRotated = rotate(0, 0, originX, originY, angle);
 	var previousRotated = rotate(0, 0, previousX, previousY, angle);
 	var nextRotated = rotate(0, 0, nextX, nextY, angle);
@@ -160,27 +163,5 @@ function getDrawCurvePoints(originX, originY, previousX, previousY, nextX, nextY
 	};
 	return points;
 }
-
-canvas.addEventListener("touchstart", function (e) {
-  var touch = e.touches[0];
-  var mouseEvent = new MouseEvent("mousedown", {
-    clientX: touch.clientX,
-    clientY: touch.clientY
-  });
-  canvas.dispatchEvent(mouseEvent);
-}, false);
-canvas.addEventListener("touchend", function (e) {
-  var mouseEvent = new MouseEvent("mouseup", {});
-  canvas.dispatchEvent(mouseEvent);
-}, false);
-canvas.addEventListener("touchmove", function (e) {
-  var touch = e.touches[0];
-  var mouseEvent = new MouseEvent("mousemove", {
-    clientX: touch.clientX,
-    clientY: touch.clientY
-  });
-  canvas.dispatchEvent(mouseEvent);
-}, false);
-
 
 init();
