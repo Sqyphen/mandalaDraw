@@ -89,8 +89,6 @@ function drawLinesRedraw()
 		{
 			var slicedX = clickX.slice(Math.max(clickX.length - 100, 1));
 			var slicedY = clickY.slice(Math.max(clickY.length - 100, 1));
-			var originX = slicedX[i-2];
-			var originY = slicedY[i-2];
 			var previousX = slicedX[i-1];
 			var previousY = slicedY[i-1];
 			var nextX = slicedX[i];
@@ -114,16 +112,16 @@ function drawLinesRedraw()
 
 		var pointX = clickX[clickX.length-1];
 		var pointY = clickY[clickY.length-1];
-		var points = getDrawPoints(0, 0, pointX, pointY, angle);
+		var boxPoints = getDrawPoints(0, 0, pointX, pointY, angle);
 		context.translate(pointX, pointY);
 
 		//context.rotate(45*Math.PI/180);
 		
-		context.rect(points.nX - pointX, points.nY - pointY,3,3);
+		context.rect(boxPoints.nX - pointX, boxPoints.nY - pointY,3,3);
 		context.fillStyle = "#fff";
 		context.fill();
 
-		context.rect(points.nX - pointX, -points.nY - pointY,3,3);
+		context.rect(boxPoints.nX - pointX, -boxPoints.nY - pointY,3,3);
 		context.fillStyle = "#fff";
 		context.fill();
 		
@@ -132,15 +130,6 @@ function drawLinesRedraw()
 		context.restore();
 		context.stroke();
 	});
-}
-
-function drawCurve(pX0, pY0, pX, pY, nX, nY)
-{
-	context.beginPath();
-	context.moveTo(pX0, pY0);
-	context.quadraticCurveTo(pX, pY, nX, nY);
-	context.closePath();
-	context.stroke();
 }
 
 function getDrawPoints(previousX, previousY, nextX, nextY, angle)
@@ -173,7 +162,6 @@ function getDrawCurvePoints(originX, originY, previousX, previousY, nextX, nextY
 }
 
 canvas.addEventListener("touchstart", function (e) {
-  mousePos = getTouchPos(canvas, e);
   var touch = e.touches[0];
   var mouseEvent = new MouseEvent("mousedown", {
     clientX: touch.clientX,
@@ -193,13 +181,6 @@ canvas.addEventListener("touchmove", function (e) {
   });
   canvas.dispatchEvent(mouseEvent);
 }, false);
-// Get the position of a touch relative to the canvas
-function getTouchPos(canvasDom, touchEvent) {
-  var rect = canvasDom.getBoundingClientRect();
-  return {
-    x: touchEvent.touches[0].clientX - rect.left,
-    y: touchEvent.touches[0].clientY - rect.top
-  };
-}
+
 
 init();
