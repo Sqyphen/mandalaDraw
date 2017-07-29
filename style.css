@@ -4,9 +4,11 @@ body {
 	padding: 0;
 	width:  100%;
 	height: 100%;
-	position: fixed;
 }
 body {
+	position: fixed;
+	top: 0;
+    left: 0;
 	text-align: center;
 
 	/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#47428d+0,96a5cf+100 */
