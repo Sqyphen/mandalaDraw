@@ -1,8 +1,9 @@
 var canvas = document.getElementById("canvas"),
 	context = canvas.getContext("2d"),
 	paint = false,
-	clickX = [],
-	clickY = [],
+	inital = true,
+	clickX = [50, 100],
+	clickY = [50, 0],
 	clickDrag = [],
 	pointTransformations = [ 0, -72, -144, -216, -284 ];
 
@@ -13,6 +14,25 @@ function init(){
 	window.addEventListener("resize", resize);
 	window.addEventListener("touchstart", resize);
 	context.translate((canvas.width/2), (canvas.height/2));
+	redraw();
+	drawInitial();
+}
+
+function drawInitial(){
+	drawRotatedSquare(clickX[1]-6, clickY[1]-6, 12, 45);
+}
+
+function drawRotatedSquare(x,y,height,degrees){
+    context.save();
+
+    context.translate( x+height/2, y+height/2 );
+    context.rotate(degrees*Math.PI/180);
+
+    context.rect(-height/2, -height/2, height,height);
+    context.fillStyle = "#fff";
+    context.fill();
+
+    context.restore();
 }
 
 function resize(){
@@ -31,18 +51,25 @@ canvas.addEventListener("touchstart", function (e) {
 }, false);
 
 canvas.onmousemove = function(e){
-	if(paint) {
-		addClick(e.pageX , e.pageY, true);
-		redraw();
-	}
+	moveMotion(e.pageX , e.pageY);
 };
 
 canvas.addEventListener("touchmove", function (e) {
-	if(paint) {
-		addClick(e.touches[0].clientX, e.touches[0].clientY, true);
-		redraw();
-	}
+	moveMotion(e.touches[0].clientX, e.touches[0].clientY);
 }, false);
+
+function moveMotion(x, y){
+	if(paint) {
+		if(inital == false){
+			addClick(x, y, true);
+			redraw();
+		} else {
+			inital = false;
+			clickX = [x];
+			clickY = [y];
+		}
+	}
+}
 
 canvas.onmouseup = function(e){
 	paint = false;
@@ -113,6 +140,7 @@ function drawLinesRedraw(){
 		context.closePath();
 
 		//draw endpoints
+		
 		context.save();
 
 		var pointX = clickX[clickX.length-1];
@@ -120,17 +148,11 @@ function drawLinesRedraw(){
 		var boxPoints = getDrawPoints(0, 0, pointX, pointY, angle);
 		context.translate(pointX, pointY);
 
-		//context.rotate(45*Math.PI/180);
-		
-		context.rect(boxPoints.nX - pointX, boxPoints.nY - pointY,3,3);
-		context.fillStyle = "#fff";
-		context.fill();
+		drawRotatedSquare(boxPoints.nX - pointX, boxPoints.nY - pointY, 3, 45);
 
-		context.rect(boxPoints.nX - pointX, -boxPoints.nY - pointY,3,3);
-		context.fillStyle = "#fff";
-		context.fill();
-		
-		//context.rotate(-45*Math.PI/180);
+		if(clickY.length > 2){
+			drawRotatedSquare(boxPoints.nX - pointX, -boxPoints.nY - pointY, 3, 45);
+		}
 
 		context.restore();
 		context.stroke();
