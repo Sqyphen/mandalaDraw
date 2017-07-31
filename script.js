@@ -5,7 +5,7 @@ var canvas = document.getElementById("canvas"),
 	clickX = [50, 100],
 	clickY = [50, 0],
 	clickDrag = [],
-	pointTransformations = [ 0, -72, -144, -216, -284 ];
+	pointTransformations = [ 0, -72, -144, -216, -288 ];
 
 function init(){
 	canvas.width = window.innerWidth;
@@ -19,7 +19,7 @@ function init(){
 }
 
 function drawInitial(){
-	drawRotatedSquare(clickX[1]-6, clickY[1]-6, 12, 45);
+	drawRotatedSquare(clickX[1]-2, clickY[1]-6, 12, 45);
 }
 
 function drawRotatedSquare(x,y,height,degrees){
@@ -79,8 +79,7 @@ canvas.addEventListener("touchend", function (e) {
 	paint = false;
 }, false);
 
-function addClick(x, y, dragging)
-{
+function addClick(x, y, dragging){
 	var offsetX = x - (canvas.width/2);
 	var offsetY = y - (canvas.height/2);
 
@@ -140,7 +139,6 @@ function drawLinesRedraw(){
 		context.closePath();
 
 		//draw endpoints
-		
 		context.save();
 
 		var pointX = clickX[clickX.length-1];
